@@ -1,0 +1,121 @@
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  width: 94%; /* Ajusta el ancho del contenedor */
+  margin: 4% auto; /* Ajusta el margen superior e inferior y centra horizontalmente */
+}
+
+.card {
+  position: relative;
+  margin: 1%;
+  width: 15%;
+  box-sizing: border-box;
+}
+
+.circle {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 20%;
+  height: 13.5135%;
+  background-color: #4CAF50;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.score {
+  color: white;
+  font-size: 100%;
+  font-weight: bold;
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px; /* Ajusta según sea necesario */
+  margin-top: 20px; /* Ajusta según sea necesario */
+}
+
+.lds-ellipsis {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 33px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #020101;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+
+
+@media screen and (max-width: 1000px) {
+  .card {
+    width: calc(33.33% - 20px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .card {
+    width: calc(50% - 20px);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .card {
+    width: calc(100% - 20px);
+  }
+}
