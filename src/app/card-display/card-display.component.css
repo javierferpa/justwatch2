@@ -17,9 +17,9 @@
   position: absolute;
   top: 5%;
   left: 5%;
-  width: 20%;
-  height: 13.5135%;
-  background-color: #4CAF50;
+  width: 20%; /* Ajusta el tamaño del círculo en relación con el ancho de la tarjeta */
+  height: 13.5135%; /* Ajusta el tamaño del círculo en relación con el ancho de la tarjeta */
+  background-color: #084a64; /* Cambia el color del círculo a un azul claro */
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -28,7 +28,7 @@
 
 .score {
   color: white;
-  font-size: 100%;
+  font-size: 1em; 
   font-weight: bold;
 }
 
