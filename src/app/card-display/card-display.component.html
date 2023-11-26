@@ -1,5 +1,5 @@
 <div class="card-container">
-  <div *ngFor="let peli of data" class="card">
+  <div *ngFor="let peli of data" class="card" (click)="onCardClick(peli.id)" >
     <div class="circle">
       <p class="score">{{ peli.vote_average | number:'1.0-2' }}</p>
     </div>

@@ -4,6 +4,7 @@
   justify-content: space-around;
   width: 94%; /* Ajusta el ancho del contenedor */
   margin: 4% auto; /* Ajusta el margen superior e inferior y centra horizontalmente */
+  margin-top: 7%;
 }
 
 .card {
@@ -108,13 +109,13 @@
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 800px) {
   .card {
     width: calc(50% - 20px);
     
   }
   .card-container {
-  margin-top: 20%;
+  margin-top: 15%;
   }
 }
 

@@ -1,6 +1,8 @@
 import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-card-display',
@@ -10,6 +12,9 @@ import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http'
   styleUrl: './card-display.component.css'
 })
 export class CardDisplayComponent implements OnInit {
+
+  constructor(private router: Router) {}
+
   httpClient = inject(HttpClient);
   data: any[] = [];
   contador = 1;
@@ -70,5 +75,9 @@ export class CardDisplayComponent implements OnInit {
     if (windowBottom >= docHeight - 50) {
       this.fetchData();
     }
+  }
+
+  onCardClick(cardId: string) {
+    this.router.navigate(['/card-detail', cardId]);
   }
 }
