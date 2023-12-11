@@ -1,1 +1,21 @@
-<p>card-detail works! {{this.cardId}}</p>
+<div class="card-detail-container">
+    <div class="content-container" [ngStyle]="{'background-image': 'url(https://image.tmdb.org/t/p/original/' + this.movieDetails.backdrop_path +')'}">
+        <div class="left-column">
+            <!-- Imagen grande en la columna izquierda -->
+            <img [src]="'https://image.tmdb.org/t/p/original' + this.movieDetails.poster_path" alt="Imagen 1">
+        </div>
+        <div class="right-column">
+            <!-- Título -->
+            <h1>{{this.movieDetails.title}}</h1>
+            <br>
+            <!-- Subtítulo -->
+            <h3>{{this.movieDetails.overview}}</h3>
+            <!-- Recuadro con imágenes pequeñas -->
+            <div class="image-box">
+                @for(provider of watchProviders; track provider.provider_id) {
+                <img [src]="'https://image.tmdb.org/t/p/original' + provider.logo_path" alt="Imagen 1">
+                }
+            </div>
+        </div>
+    </div>
+</div>

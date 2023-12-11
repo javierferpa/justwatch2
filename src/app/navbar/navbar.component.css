@@ -1,43 +1,47 @@
 /* navbar.component.css */
 .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #333; /* Color de fondo de la barra de navegación */
-    color: white; /* Color del texto */
-    z-index: 1000; /* Asegura que la barra de navegación esté por encima de otros elementos */
-  }
-  
-  .navbar-brand {
-    display: flex;
-    align-items: center;
-  }
-  
-  .logo {
-    width: 50px; /* Ajusta el ancho de tu logo según sea necesario */
-    height: auto;
-    margin-right: 10px;
-  }
-  
-  .navbar-links {
-    display: flex;
-    gap: 20px;
-    margin-right: 10%; /* Agrega margen a la derecha de los enlaces */
-  }
-  
-  .nav-link {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    margin-right: 5%; /* Agrega margen a la derecha de cada enlace */
-  }
-  
-  .nav-link:hover {
-    text-decoration: underline;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #333; /* Color de fondo de la barra de navegación */
+  color: white; /* Color del texto */
+  z-index: 1000; /* Asegura que la barra de navegación esté por encima de otros elementos */
+  transition: top 0.3s; /* Agrega una transición suave al cambio de posición */
+}
+
+.navbar.sticky {
+  top: -50px; /* Oculta la barra de navegación fuera de la pantalla cuando está pegajosa */
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 50px; /* Ajusta el ancho de tu logo según sea necesario */
+  height: auto;
+  margin-right: 10px;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+  margin-right: 10%; /* Agrega margen a la derecha de los enlaces */
+}
+
+.nav-link {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  margin-right: 5%; /* Agrega margen a la derecha de cada enlace */
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
