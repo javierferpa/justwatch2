@@ -4,6 +4,7 @@ import { Observable, map, of, throwError, timeout } from 'rxjs';
 import { DEMO_CATALOG } from './demo-catalog';
 import { CatalogPage, CatalogQuery, MediaDetail, MediaType, Provider, ProviderResponse, TmdbMedia, normalizeMedia } from './media';
 import { PreferencesService } from './preferences.service';
+import { CATALOG_API_BASE } from './api.config';
 
 interface TmdbPage { results: TmdbMedia[]; page: number; total_pages: number; total_results: number }
 interface TmdbDetail extends TmdbMedia {
@@ -16,7 +17,7 @@ interface TmdbDetail extends TmdbMedia {
 
 export function apiErrorMessage(error: unknown): string {
   if (error instanceof HttpErrorResponse) {
-    if (error.status === 401 || error.status === 403) return 'TMDB ha rechazado el token. Revisa la conexión en Ajustes.';
+    if (error.status === 401 || error.status === 403 || error.status === 503) return 'El servicio de catálogo no está disponible ahora. Vuelve a intentarlo en unos instantes.';
     if (error.status === 404) return 'No encontramos este título. Puede haber sido retirado del catálogo.';
     if (error.status === 429) return 'TMDB ha recibido demasiadas peticiones. Espera un momento y vuelve a intentarlo.';
     if (error.status === 0) return 'No se puede conectar con TMDB. Comprueba tu conexión y vuelve a intentarlo.';
@@ -28,7 +29,7 @@ export function apiErrorMessage(error: unknown): string {
 export class CatalogService {
   private readonly http = inject(HttpClient);
   private readonly preferences = inject(PreferencesService);
-  private readonly base = 'https://api.themoviedb.org/3';
+  private readonly base = inject(CATALOG_API_BASE);
 
   catalog(query: CatalogQuery): Observable<CatalogPage> {
     if (this.preferences.demo()) return of(this.demoPage(query));
@@ -87,13 +88,15 @@ export class CatalogService {
       .pipe(map(response => response.results));
   }
 
-  validateToken(token: string): Observable<unknown> {
-    return this.get('/configuration', {}, token.trim().replace(/^Bearer\s+/i, ''));
+  health(): Observable<{ status: string }> {
+    // Check a real catalog read, not only the presence of server configuration.
+    return this.get<TmdbPage>('/trending/all/week', { language: 'es-ES', page: '1', include_adult: 'false' })
+      .pipe(map(page => ({ status: Array.isArray(page.results) ? 'ok' : 'unavailable' })));
   }
 
-  private get<T>(path: string, params: Record<string, string> = {}, token = this.preferences.token()): Observable<T> {
+  private get<T>(path: string, params: Record<string, string> = {}): Observable<T> {
     return this.http.get<T>(this.base + path, {
-      params, headers: new HttpHeaders({ accept: 'application/json', Authorization: `Bearer ${token}` }),
+      params, headers: new HttpHeaders({ accept: 'application/json' }),
     }).pipe(timeout(15000));
   }
 

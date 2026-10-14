@@ -18,33 +18,25 @@ export class SettingsComponent {
   readonly busy = signal(false);
   readonly error = signal('');
   readonly success = signal('');
-  token = '';
 
-  connect(): void {
+  checkConnection(): void {
     if (this.busy()) return;
-    const token = this.token.trim().replace(/^Bearer\s+/i, '');
+    this.busy.set(true);
     this.error.set('');
     this.success.set('');
-    if (token.length < 20 || /\s/.test(token) || token.length > 2048) {
-      this.error.set('Introduce el API Read Access Token de TMDB, sin comillas.');
-      return;
-    }
-    this.busy.set(true);
-    this.api.validateToken(token).pipe(takeUntilDestroyed(this.destroy)).subscribe({
-      next: () => {
-        this.preferences.setToken(token);
-        this.token = '';
+    this.api.health().pipe(takeUntilDestroyed(this.destroy)).subscribe({
+      next: response => {
         this.busy.set(false);
-        this.success.set('TMDB conectado. Ya puedes buscar títulos y consultar disponibilidad real.');
+        if (response.status === 'ok') this.success.set('El servicio está disponible. Ya puedes explorar el catálogo.');
+        else this.error.set('El servicio de catálogo no está disponible ahora. Vuelve a intentarlo más tarde.');
       },
       error: error => { this.error.set(apiErrorMessage(error)); this.busy.set(false); },
     });
   }
 
-  disconnect(): void {
-    this.preferences.setToken('');
-    this.token = '';
+  setDemo(enabled: boolean): void {
+    this.preferences.setDemo(enabled);
     this.error.set('');
-    this.success.set('Conexión eliminada de esta sesión. Puedes seguir explorando la selección de ejemplo.');
+    this.success.set('');
   }
 }

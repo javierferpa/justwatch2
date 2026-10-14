@@ -14,6 +14,7 @@ describe('Application routes and visible behavior', () => {
   beforeEach(() => {
     localStorage.clear(); sessionStorage.clear();
     TestBed.configureTestingModule({ providers: [provideRouter(routes), provideHttpClient()] });
+    TestBed.inject(PreferencesService).setDemo(true);
   });
   it('renders accessible navigation and a main landmark', async () => {
     const fixture = TestBed.createComponent(AppComponent);

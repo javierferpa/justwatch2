@@ -21,9 +21,9 @@
     </section>
   }
   <div class="mode-bar" [class.connected]="!preferences.demo()">
-    <span><span class="mode-dot" aria-hidden="true"></span>{{ preferences.demo() ? 'Modo de ejemplo' : 'Catálogo conectado' }}</span>
-    <p>{{ preferences.demo() ? '20 títulos para descubrir la app. Conecta TMDB para buscar en el catálogo completo y consultar dónde verlos.' : 'Datos de TMDB · Disponibilidad de JustWatch para ' + preferences.regionName() }}</p>
-    <a routerLink="/settings">{{ preferences.demo() ? 'Conectar TMDB' : 'Ajustes' }} <span aria-hidden="true">↗</span></a>
+    <span><span class="mode-dot" aria-hidden="true"></span>{{ preferences.demo() ? 'Modo de ejemplo' : 'Catálogo completo' }}</span>
+    <p>{{ preferences.demo() ? '20 títulos para descubrir la app. Usa el catálogo completo para buscar más historias y consultar dónde verlas.' : 'Datos de TMDB · Disponibilidad de JustWatch para ' + preferences.regionName() }}</p>
+    <a routerLink="/settings">{{ preferences.demo() ? 'Usar catálogo completo' : 'Ajustes' }} <span aria-hidden="true">↗</span></a>
   </div>
   <section id="catalog" aria-labelledby="catalog-title">
     <div class="section-heading">
@@ -51,7 +51,7 @@
             @for (item of genres(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
           </select></label>
           <label><span class="sr-only">Plataforma de streaming</span><select aria-label="Plataforma de streaming" [value]="provider()" [disabled]="preferences.demo() || !providers().length" (change)="setFilter('provider', $any($event.target).value)">
-            <option value="">{{ preferences.demo() ? 'Conecta TMDB' : 'Todas las plataformas' }}</option>
+            <option value="">{{ preferences.demo() ? 'Solo en catálogo completo' : 'Todas las plataformas' }}</option>
             @for (item of providers(); track item.provider_id) { <option [value]="item.provider_id">{{ item.provider_name }}</option> }
           </select></label>
           <label><span class="sr-only">Ordenar catálogo</span><select aria-label="Ordenar catálogo" [value]="sort()" (change)="setFilter('sort', $any($event.target).value)">
@@ -81,7 +81,7 @@
       <div class="state-panel">
         <span class="empty-symbol" aria-hidden="true">{{ type() === 'watchlist' ? '+' : '⌕' }}</span>
         <h2>{{ type() === 'watchlist' && !search() ? 'Tu lista está esperando una buena historia' : 'No encontramos títulos con esta selección' }}</h2>
-        <p>{{ type() === 'watchlist' && !search() ? 'Pulsa + en cualquier cartel para guardarlo aquí y tenerlo a mano cuando llegue la noche de sofá.' : preferences.demo() ? 'La búsqueda de ejemplo está limitada a 20 títulos. Prueba «Dune» o conecta TMDB para explorar más.' : 'Prueba otra búsqueda o cambia los filtros.' }}</p>
+        <p>{{ type() === 'watchlist' && !search() ? 'Pulsa + en cualquier cartel para guardarlo aquí y tenerlo a mano cuando llegue la noche de sofá.' : preferences.demo() ? 'La búsqueda de ejemplo está limitada a 20 títulos. Prueba «Dune» o vuelve al catálogo completo para explorar más.' : 'Prueba otra búsqueda o cambia los filtros.' }}</p>
         @if (type() === 'watchlist' && !search()) { <a class="button" routerLink="/">Descubrir historias</a> }
         @else { <button class="button secondary" (click)="clearFilters()">Limpiar selección</button> }
       </div>

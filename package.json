@@ -8,9 +8,11 @@
     "build": "ng build",
     "build:pages": "ng build --base-href /justwatch2/ && node scripts/prepare-pages.mjs",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test --no-watch",
+    "test": "npm run test:unit && npm run test:api",
     "test:watch": "ng test",
-    "check": "npm run test && npm run build && node scripts/check-source.mjs"
+    "check": "npm run test && npm run build && node scripts/check-source.mjs",
+    "test:unit": "ng test --no-watch",
+    "test:api": "node --test api/worker/index.spec.js"
   },
   "engines": {
     "node": "^22.22.3 || ^24.15.0 || >=26.0.0"

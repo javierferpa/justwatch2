@@ -3,9 +3,8 @@ import { Media, REGIONS, mediaKey } from './media';
 
 @Injectable({ providedIn: 'root' })
 export class PreferencesService {
-  private readonly tokenState = signal(this.read('sessionStorage', 'jw2.token') || '');
-  readonly token = this.tokenState.asReadonly();
-  readonly demo = computed(() => !this.token());
+  private readonly demoState = signal(this.read('sessionStorage', 'jw2.demo') === 'true');
+  readonly demo = this.demoState.asReadonly();
   private readonly regionState = signal(this.loadRegion());
   readonly region = this.regionState.asReadonly();
   readonly regionName = computed(() => REGIONS.find(region => region.code === this.region())?.name || 'España');
@@ -13,10 +12,15 @@ export class PreferencesService {
   readonly watchlist = this.listState.asReadonly();
   readonly storageNotice = signal('');
 
-  setToken(token: string): void {
-    const clean = token.trim().replace(/^Bearer\s+/i, '');
-    this.tokenState.set(clean);
-    this.write('sessionStorage', 'jw2.token', clean);
+  constructor() {
+    // Remove only the obsolete credentials from this application's previous version.
+    this.write('sessionStorage', 'jw2.token', '');
+    this.write('localStorage', 'jw2.token', '');
+  }
+
+  setDemo(enabled: boolean): void {
+    this.demoState.set(enabled);
+    this.write('sessionStorage', 'jw2.demo', enabled ? 'true' : '');
   }
 
   setRegion(region: string): void {

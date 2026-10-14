@@ -52,7 +52,7 @@ export class CardDisplayComponent {
   private providerCacheKey = '';
 
   constructor() {
-    combineLatest([this.route.data, this.route.queryParamMap, toObservable(this.preferences.token),
+    combineLatest([this.route.data, this.route.queryParamMap, toObservable(this.preferences.demo),
       toObservable(this.preferences.region)]).pipe(takeUntilDestroyed(this.destroy))
       .subscribe(([data, params]) => {
         this.type.set(data['type'] || 'all');
@@ -107,7 +107,7 @@ export class CardDisplayComponent {
 
   loadProviderOptions(force = false): void {
     const type = this.type();
-    const cacheKey = type + this.preferences.region() + this.preferences.token();
+    const cacheKey = type + this.preferences.region() + this.preferences.demo();
     if (!force && cacheKey === this.providerCacheKey) return;
     this.providerCacheKey = cacheKey;
     this.optionsRequest?.unsubscribe();

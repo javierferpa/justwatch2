@@ -4,7 +4,7 @@
 @if (error()) {
   <div class="container state-panel" role="alert"><h1>No podemos mostrar esta ficha</h1><p>{{ error() }}</p>
     @if (canRetry()) { <button class="button" (click)="loadDetail()">Reintentar</button> }<a class="button secondary" routerLink="/">Volver al catálogo</a>
-    @if (preferences.demo()) { <p>El modo de ejemplo solo incluye los 20 títulos de la selección. <a routerLink="/settings">Conecta TMDB</a> para consultar otros títulos.</p> }
+    @if (preferences.demo()) { <p>El modo de ejemplo solo incluye los 20 títulos de la selección. <a routerLink="/settings">Usa el catálogo completo</a> para consultar otros títulos.</p> }
   </div>
 }
 @if (detail(); as item) {
@@ -39,7 +39,7 @@
       <section class="availability-section" aria-labelledby="availability-title">
         <div class="availability-heading"><div><p class="eyebrow">ELIGE DÓNDE DISFRUTARLA</p><h2 id="availability-title">Dónde ver en {{ preferences.regionName() }}</h2></div><a routerLink="/settings">Cambiar país ↗</a></div>
         @if (preferences.demo()) {
-          <div class="availability-empty"><h3>Consulta la disponibilidad real</h3><p>Conecta TMDB para ver las opciones de suscripción, alquiler y compra en {{ preferences.regionName() }}.</p><a class="button secondary" routerLink="/settings">Conectar TMDB ↗</a></div>
+          <div class="availability-empty"><h3>Consulta la disponibilidad real</h3><p>Usa el catálogo completo para ver las opciones de suscripción, alquiler y compra en {{ preferences.regionName() }}.</p><a class="button secondary" routerLink="/settings">Usar catálogo completo ↗</a></div>
         } @else if (providerLoading()) {
           <p class="providers-loading" role="status"><span class="spinner" aria-hidden="true"></span> Consultando plataformas…</p>
         } @else if (providerError()) {

@@ -49,7 +49,7 @@ export class CardDetailComponent {
   private mediaId = 0;
 
   constructor() {
-    combineLatest([this.route.paramMap, toObservable(this.preferences.token)]).pipe(takeUntilDestroyed(this.destroy))
+    combineLatest([this.route.paramMap, toObservable(this.preferences.demo)]).pipe(takeUntilDestroyed(this.destroy))
       .subscribe(([params]) => {
         this.detailRequest?.unsubscribe();
         this.detail.set(null);
@@ -70,7 +70,7 @@ export class CardDetailComponent {
         this.mediaId = id;
         this.loadDetail();
       });
-    combineLatest([this.route.paramMap, toObservable(this.preferences.token), toObservable(this.preferences.region)])
+    combineLatest([this.route.paramMap, toObservable(this.preferences.demo), toObservable(this.preferences.region)])
       .pipe(takeUntilDestroyed(this.destroy)).subscribe(([params]) => {
         const type = params.get('type');
         const rawId = params.get('id') || '';

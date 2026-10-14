@@ -1,90 +1,93 @@
 # JustWatch2
 
-Una aplicación personal para descubrir películas y series, consultar dónde verlas por país y guardar una lista para después. Interfaz en español, adaptable a móvil y escritorio, construida con Angular 22.
+Aplicación personal y no comercial para descubrir películas y series, consultar dónde verlas por país y guardar una lista para después. Interfaz en español, adaptable a móvil y escritorio, construida con Angular 22.
 
 **Web:** [javierferpa.github.io/justwatch2](https://javierferpa.github.io/justwatch2/)
 
 ## Qué puedes hacer
 
-- Explorar tendencias semanales, películas y series con sus rutas y fichas propias.
+- Explorar el catálogo completo de TMDB, tendencias semanales, películas y series.
 - Buscar por título y compartir la búsqueda mediante la URL.
 - Filtrar películas y series por género y plataforma, y ordenar por popularidad, valoración o fecha.
 - Consultar suscripción, opciones gratuitas, alquiler y compra en el país elegido.
 - Ver sinopsis, reparto, puntuación y tráiler oficial cuando esté disponible.
 - Guardar títulos en «Mi lista», conservada en el navegador.
-- Recuperarte de errores de conexión, token inválido, datos ausentes y enlaces incorrectos.
+- Recuperarte de errores de conexión, datos ausentes y enlaces incorrectos.
 
-## Empezar
+El catálogo completo está activo al abrir la web. Los visitantes no necesitan cuenta ni token. España es el país inicial. En Ajustes puedes elegir otro país, comprobar una consulta real al catálogo o activar una selección de ejemplo de 20 títulos, sin disponibilidad simulada.
 
-Necesitas una versión compatible de Node.js: **24.15 o superior dentro de Node 24**, **22.22.3 o superior dentro de Node 22**, o Node 26+. Recomendado: Node 24 LTS.
+## Arquitectura y credenciales
 
-```sh
-npm ci
-npm start
-```
+    Navegador → servidor de catálogo de JustWatch2 → API de TMDB
+                    secreto en el servidor
 
-Abre `http://127.0.0.1:4200`.
+GitHub Pages sirve únicamente la interfaz estática. El navegador solicita metadatos al [servidor de catálogo](https://justwatch2-catalog-api.politewasp1025.chatgpt.site) alojado en Sites. El servidor añade el token al consultar TMDB; nunca lo entrega al navegador ni lo incorpora al paquete de Pages.
 
-La aplicación arranca con una selección de **20 títulos de ejemplo**, obtenida de TMDB el 14 de octubre de 2026. La búsqueda y los filtros del modo de ejemplo se limitan a esa selección. Nunca simula disponibilidad de streaming.
+- **TMDB_READ_ACCESS_TOKEN** está guardado como **GitHub Actions repository secret** y como **runtime secret de Sites**. GitHub conserva la copia; el servidor utiliza la de Sites. GitHub Secrets no ofrece ejecución de servidor a Pages.
+- La CI no lee el secreto ni lo inserta en el build. **core/api.config.ts** contiene exclusivamente la URL pública del servidor.
+- **api/worker/index.js** contiene el código del servidor. Solo permite GET de descubrimiento, búsqueda, fichas y proveedores; rechaza operaciones de cuenta, autenticación, escrituras, URL arbitrarias y credenciales suministradas por visitantes.
+- Valida las consultas, limita tiempos y tamaños de respuesta y rechaza redirecciones antes de reenviar la credencial.
+- La caché de metadatos dura 5 minutos y la de proveedores 15. No conserva las búsquedas en esa caché. Sus límites por IP y concurrencia son por instancia del servidor, no una cuota global ni autenticación. El encabezado Origin puede falsificarse fuera de un navegador.
+- Los errores entregan mensajes genéricos. Los diagnósticos de aplicación no registran credenciales ni el texto de excepciones. El proveedor de alojamiento puede conservar registros de peticiones, incluida la URL de búsqueda.
+- La versión nueva elimina valores antiguos de **jw2.token** del almacenamiento del navegador, conservando la lista y el país.
 
-Para usar el catálogo y la disponibilidad reales:
+**Credencial histórica:** el proyecto original ya incluía una credencial en el código y los paquetes publicados. Se ha eliminado del código y del build actuales y se ha regenerado para esta publicación. La copia histórica permanece en commits antiguos, pero TMDB la rechaza con 401. La nueva credencial está únicamente en los almacenes de secretos. Para futuras rotaciones, renueva la clave en los [ajustes de TMDB](https://www.themoviedb.org/settings/api), actualiza ambos secretos y vuelve a desplegar el servidor. No copies una clave nueva en un archivo, commit, formulario de la app o conversación.
 
-1. Abre **Ajustes** en la aplicación.
-2. Obtén tu **API Read Access Token** en los [ajustes de TMDB](https://www.themoviedb.org/settings/api).
-3. Pégalo y pulsa **Conectar TMDB**. La aplicación valida el token antes de cambiar la conexión.
-4. Selecciona tu país. España es la selección inicial.
+La lista y el país se guardan localmente. No hay cuentas, sincronización ni telemetría propia de JustWatch2. El navegador solicita imágenes a TMDB y tipografías a Google Fonts; la búsqueda pasa por Sites y TMDB. Sus políticas de privacidad siguen siendo aplicables.
 
-El token solo se guarda en `sessionStorage` de esa pestaña hasta cerrarla, y se envía mediante el encabezado Authorization directamente a `api.themoviedb.org`. La lista y el país se guardan en `localStorage`. No hay servidor propio, cuentas, sincronización ni telemetría de JustWatch2. El navegador solicita imágenes a TMDB, tipografías a Google Fonts y datos a TMDB al conectar; sus políticas de privacidad siguen siendo aplicables.
+## Coste y límites
 
-**Credencial histórica:** la versión antigua contenía un token de TMDB en el código y en los paquetes publicados. La versión actual lo elimina, pero sigue presente en el historial de Git. El propietario debe revocarlo o regenerarlo en TMDB. No reutilices esa credencial; eliminarla del último commit no la revoca.
+Esta configuración usa servicios incluidos o gratuitos, sin contratar alojamiento, dominio ni plan adicional:
 
-## Verificación
+- [TMDB](https://developer.themoviedb.org/docs/faq): API gratuita para uso no comercial con atribución. No equivale a una licencia comercial ni a peticiones ilimitadas.
+- [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages) y [Actions](https://docs.github.com/en/billing/concepts/product-billing/github-actions): repositorio público y runners estándar. La CI no usa runners grandes, caché de Actions ni sube artefactos adicionales.
+- [Sites](https://help.openai.com/en/articles/20001339-creating-and-using-chatgpt-sites): durante la beta pública, el uso está incluido en el plan de ChatGPT hasta sus límites. Al alcanzarlos puede limitarse la publicación; las condiciones pueden cambiar. Se utiliza el plan ya disponible, sin activar ampliaciones de pago.
 
-```sh
-npm run check
-npm audit
-```
+Condiciones consultadas el 14 de octubre de 2026. No se garantiza gratuidad perpetua, disponibilidad ilimitada ni una cuota numérica de Sites que su documentación no publica.
 
-`check` ejecuta las pruebas de integración/unidad, compila producción y comprueba que no haya JWT ni credenciales de GitHub en los archivos fuente o generados. El control de credenciales es una comprobación acotada, no una auditoría completa de secretos.
+## Desarrollo y verificación
 
-Las pruebas cubren identidades de películas/series, normalización de datos, filtros y endpoints, errores de API, almacenamiento bloqueado o corrupto, paginación, navegación, búsqueda y cambios de ficha. No necesitan un token real ni usan la red. Para iterar con las pruebas: `npm run test:watch`.
+Recomendado: Node 24 LTS, versión 24.15 o superior. También son compatibles Node 22.22.3+ dentro de Node 22 y Node 26+.
 
-Para comprobación manual en navegador:
+    npm ci
+    npm start
+
+Abre http://127.0.0.1:4200. El servidor público restringe CORS al origen de Pages; en local usa la selección de ejemplo desde Ajustes o un proxy local. Para desarrollo contra datos reales puedes sustituir **CATALOG_API_BASE** por un servidor local de confianza que ejecute el Worker con su secreto en el entorno; no insertes el token en Angular. No amplíes la audiencia de producción para pruebas locales.
+
+    npm run check
+    npm audit
+
+**check** ejecuta las pruebas Angular y del servidor, compila producción y comprueba que no haya JWT ni credenciales de GitHub en los archivos fuente o generados. Este control es acotado, no una auditoría completa de secretos.
+
+Las pruebas no usan claves reales ni la red. Cubren navegación, identidades de películas/series, filtros, paginación, errores, almacenamiento bloqueado o corrupto, migración de credenciales y las fronteras del servidor: secreto, endpoints, CORS, consultas, redirecciones, caché, concurrencia y límites. Para iterar: **npm run test:watch** o **npm run test:api**.
+
+Comprobación en la web publicada:
 
 - Inicio → guardar un título → Mi lista → recargar → quitarlo.
-- Películas/Series → género/ordenación → ficha → volver.
-- Buscar `Dune`, una búsqueda vacía y una sin resultados.
-- Conectar TMDB → buscar → cambiar país → comprobar proveedores y enlaces.
-- Probar error de token, desconexión y un enlace inválido.
-- Repetir en móvil, usando teclado y con movimiento reducido.
+- Películas/Series → género/plataforma/ordenación → ficha → volver.
+- Buscar un título fuera de los ejemplos y una búsqueda sin resultados.
+- Cambiar el país → comprobar proveedores y enlaces del país.
+- Ajustes → Comprobar conexión; probar fallo de servicio y ruta inválida.
+- Verificar en la red del navegador que ninguna petición lleva Authorization ni api_key.
+- Repetir en móvil, con teclado y movimiento reducido.
 
-## Publicación existente en GitHub Pages
+## Publicación y mantenimiento
 
-GitHub Pages sirve la carpeta **docs** de **master**. El proyecto usa rutas con `#` para que la recarga y los enlaces directos funcionen en hosting estático, también bajo `/justwatch2/`.
+GitHub Pages sirve **docs** de **master**. Las rutas con # permiten recargas y enlaces directos bajo /justwatch2/.
 
-```sh
-npm run build:pages
-```
+    npm run build:pages
 
-Este comando compila con la base correcta y sustituye exclusivamente la carpeta generada `docs/`. El resultado incluye `.nojekyll` y `404.html`; no contiene un servidor SSR. Incluye los cambios en `docs/` en el mismo commit que el código fuente antes de hacer push. La CI ejecuta pruebas, compilación y comprobación de que el paquete publicado corresponde al código.
+El comando sustituye exclusivamente **docs/**, incluye .nojekyll y 404.html y no genera SSR. Incluye el build en el mismo commit que el código antes del push. La CI comprueba que el paquete corresponde al código, sin acceder al secreto.
 
-## Arquitectura y límites
+El backend se publica por separado con Sites. Su proyecto existente es **appgprj_6acf47fcca7c819190d120bcb8eb4c28**. Reutilízalo: copia el Worker revisado al checkout de fuente de ese Site, valida el artefacto ESM, guarda y publica exactamente el commit subido. Un push a este repositorio GitHub no despliega por sí solo el backend. Después de cambiar el secreto de Sites, despliega una versión guardada para aplicar la revisión del entorno. Verifica una consulta anónima de catálogo desde el origen de Pages; **/api/health** solo informa de que el secreto está configurado.
 
-- Componentes autónomos, señales de Angular y rutas cargadas bajo demanda.
-- `core/catalog.service.ts`: acceso a TMDB, normalización y catálogo de ejemplo.
-- `core/preferences.service.ts`: conexión de sesión, país y lista local validada.
-- Las peticiones se cancelan al cambiar filtros/ruta o salir de la página; el botón «Descubrir más» tiene final y evita cargas simultáneas.
-- Los filtros de plataforma consultan streaming por suscripción/gratis/anuncios; las fichas separan además alquiler y compra.
-- La búsqueda utiliza los endpoints de búsqueda, por lo que se muestra sin filtros de descubrimiento.
-- La disponibilidad es información proporcionada por JustWatch a través de TMDB, no una garantía de precios o acceso. Se enlaza al resultado del país, sin inventar enlaces a las plataformas.
-- No se añaden datos de disponibilidad al catálogo de ejemplo. Un fallo al consultar proveedores no oculta la ficha.
-- La lista admite hasta 500 títulos en este navegador. Borrar los datos del sitio borra la lista; no hay sincronización entre dispositivos.
-- Una aplicación estática no puede ocultar una credencial al navegador. Para ofrecer acceso compartido a todos los visitantes sin token por sesión, hace falta un backend que custodie su propia credencial; ese servicio no forma parte de este proyecto.
+## Límites del producto y créditos
 
-## Fuentes y créditos
+- Las peticiones del cliente se cancelan al cambiar filtros o ruta. «Descubrir más» evita cargas simultáneas y termina al agotar páginas.
+- Los filtros de plataforma consultan suscripción/gratis/anuncios; las fichas separan además alquiler y compra.
+- La búsqueda utiliza los endpoints de búsqueda, por lo que no muestra filtros de descubrimiento.
+- La disponibilidad procede de JustWatch a través de TMDB. No garantiza precios ni acceso. Los enlaces apuntan al resultado oficial del país.
+- Un fallo de proveedores no oculta la ficha. La selección de ejemplo es una instantánea del 14 de octubre de 2026 sin disponibilidad.
+- La lista admite 500 títulos. Borrar los datos del sitio borra la lista; no se sincroniza entre dispositivos.
 
-Proyecto personal independiente, sin afiliación con JustWatch ni TMDB.
-
-Datos e imágenes de [The Movie Database](https://www.themoviedb.org). Esta aplicación utiliza la API de TMDB, pero no está respaldada ni certificada por TMDB. Disponibilidad proporcionada por [JustWatch](https://www.justwatch.com), según los [requisitos de atribución de TMDB](https://developer.themoviedb.org/reference/movie-watch-providers).
-
-Referencias de implementación: [compatibilidad de Angular](https://angular.dev/reference/versions), [autenticación de TMDB](https://developer.themoviedb.org/v4/docs/authentication-application) y [búsqueda múltiple de TMDB](https://developer.themoviedb.org/reference/search-multi).
+Proyecto personal independiente, sin afiliación con JustWatch ni TMDB. Datos e imágenes de [The Movie Database](https://www.themoviedb.org). This product uses the TMDB API but is not endorsed or certified by TMDB. Disponibilidad proporcionada por [JustWatch](https://www.justwatch.com), según los [requisitos de atribución de TMDB](https://developer.themoviedb.org/reference/movie-watch-providers).

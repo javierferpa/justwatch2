@@ -1,21 +1,18 @@
 <div class="container settings-page">
   <a class="back-link" routerLink="/">← Volver a descubrir</a>
-  <p class="eyebrow">A TU MANERA</p><h1>Un lugar para tus historias.</h1><p class="settings-intro">Elige tu país y conecta el catálogo para encontrar qué ver hoy.</p>
+  <p class="eyebrow">A TU MANERA</p><h1>Un lugar para tus historias.</h1><p class="settings-intro">Elige tu país y encuentra qué ver hoy.</p>
   <div class="settings-layout">
     <section class="settings-card" aria-labelledby="connection-title">
-      <div class="card-heading"><h2 id="connection-title">Conexión con TMDB</h2><span class="connection-status" [class.online]="!preferences.demo()">{{ preferences.demo() ? 'Modo de ejemplo' : 'Conectado' }}</span></div>
-      <p>JustWatch2 usa TMDB para consultar películas y series. Sin conexión puedes explorar los 20 títulos de ejemplo y guardar tu lista.</p>
-      <ol class="connection-steps"><li>Abre los <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener noreferrer">ajustes de API de tu cuenta de TMDB ↗</a>.</li><li>Copia el <strong>API Read Access Token</strong> (el token de lectura, no la API Key).</li><li>Pégalo aquí para comprobar y conectar esta sesión.</li></ol>
-      <form (ngSubmit)="connect()">
-        <label for="tmdb-token">Token de lectura de TMDB</label>
-        <input id="tmdb-token" name="token" type="password" [(ngModel)]="token" autocomplete="off" spellcheck="false" placeholder="Pega tu API Read Access Token" maxlength="2048" [disabled]="busy()" aria-describedby="token-help">
-        <p id="token-help" class="input-help">Se guarda solo en esta pestaña hasta cerrarla y se envía directamente a TMDB. No se añade al código ni se envía a JustWatch2.</p>
-        <div class="connection-actions"><button class="button" type="submit" [disabled]="busy()">@if (busy()) { <span class="spinner" aria-hidden="true"></span> }{{ busy() ? 'Comprobando…' : preferences.demo() ? 'Conectar TMDB' : 'Actualizar conexión' }}</button>
-          @if (!preferences.demo()) { <button class="button secondary" type="button" (click)="disconnect()" [disabled]="busy()">Desconectar</button> }
-        </div>
-      </form>
+      <div class="card-heading"><h2 id="connection-title">Tu catálogo, listo para explorar.</h2><span class="connection-status" [class.online]="!preferences.demo()">{{ preferences.demo() ? 'Modo de ejemplo' : 'Catálogo completo' }}</span></div>
+      <p>Busca películas y series, descubre las plataformas de tu país y guarda lo que quieras ver. No necesitas una cuenta ni configurar una conexión.</p>
+      <div class="connection-actions">
+        @if (preferences.demo()) { <button class="button" (click)="setDemo(false)">Usar catálogo completo</button> }
+        @else { <button class="button" (click)="checkConnection()" [disabled]="busy()">@if (busy()) { <span class="spinner" aria-hidden="true"></span> }{{ busy() ? 'Comprobando…' : 'Comprobar conexión' }}</button> }
+        <a class="button secondary" routerLink="/">Explorar catálogo ↗</a>
+      </div>
       @if (error()) { <p class="form-error" role="alert">{{ error() }}</p> }
       @if (success()) { <div class="form-success" role="status"><p>{{ success() }}</p><a routerLink="/">Explorar catálogo ↗</a></div> }
+      <details class="example-option"><summary>Selección de ejemplo</summary><p>Si quieres probar la app sin consultar el catálogo, puedes explorar una selección fija de 20 títulos. No incluye disponibilidad de streaming.</p><button class="button secondary" (click)="setDemo(!preferences.demo())">{{ preferences.demo() ? 'Volver al catálogo completo' : 'Usar selección de ejemplo' }}</button></details>
     </section>
     <div class="settings-aside">
       <section class="settings-card" aria-labelledby="country-title"><p class="eyebrow">DÓNDE ESTÁS</p><h2 id="country-title">Tu país, tus plataformas.</h2><p>La disponibilidad cambia según el país. Esta selección se aplica a los filtros y a las fichas.</p><label for="settings-region">País de disponibilidad</label><select id="settings-region" [ngModel]="preferences.region()" (ngModelChange)="preferences.setRegion($event)" aria-label="País de disponibilidad en ajustes">
@@ -25,9 +22,10 @@
     </div>
   </div>
   <section class="credits-card" aria-labelledby="credits-title"><h2 id="credits-title">Fuentes y créditos</h2>
-    <p>Proyecto personal independiente, sin afiliación con JustWatch ni TMDB.</p>
+    <p>Proyecto personal independiente y no comercial, sin afiliación con JustWatch ni TMDB.</p>
     <p lang="en">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
     <div class="source-links"><a class="tmdb-logo" href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer"><img src="assets/tmdb-logo.svg" alt="The Movie Database" width="110" loading="lazy"></a><a href="https://www.justwatch.com" target="_blank" rel="noopener noreferrer">Disponibilidad de streaming: <strong>JustWatch ↗</strong></a></div>
-    <p>La selección de ejemplo es una instantánea de TMDB del 14 de octubre de 2026. No incluye datos de disponibilidad ni garantiza puntuaciones actuales. Para datos actuales, conecta TMDB.</p>
+    <p>El catálogo completo consulta TMDB mediante el servicio de JustWatch2. Las imágenes vienen de TMDB y las tipografías de Google Fonts. La lista personal permanece en tu navegador.</p>
+    @if (preferences.demo()) { <p>La selección de ejemplo es una instantánea de TMDB del 14 de octubre de 2026. No incluye disponibilidad ni garantiza puntuaciones actuales.</p> }
   </section>
 </div>

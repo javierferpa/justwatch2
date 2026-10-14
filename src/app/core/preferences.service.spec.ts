@@ -6,17 +6,27 @@ import { DEMO_CATALOG } from './demo-catalog';
 describe('Browser preferences', () => {
   beforeEach(() => { localStorage.clear(); sessionStorage.clear(); });
   const service = () => TestBed.inject(PreferencesService);
-  it('starts in demo mode with Spain as the country', () => {
-    expect(service().demo()).toBe(true);
+  it('starts with the public catalog enabled and Spain as the country', () => {
+    expect(service().demo()).toBe(false);
     expect(service().region()).toBe('ES');
   });
-  it('stores the token only in this session and removes it on disconnect', () => {
-    service().setToken('Bearer fake-read-token');
-    expect(sessionStorage.getItem('jw2.token')).toBe('fake-read-token');
-    expect(localStorage.getItem('jw2.token')).toBeNull();
-    service().setToken('');
+  it('removes obsolete credentials without touching saved titles or other browser data', () => {
+    sessionStorage.setItem('jw2.token', 'obsolete-test-value');
+    localStorage.setItem('jw2.token', 'obsolete-test-value');
+    localStorage.setItem('another.app', 'keep');
+    localStorage.setItem('jw2.watchlist', JSON.stringify([DEMO_CATALOG[0]]));
+    expect(service().watchlist()).toHaveLength(1);
     expect(sessionStorage.getItem('jw2.token')).toBeNull();
+    expect(localStorage.getItem('jw2.token')).toBeNull();
+    expect(localStorage.getItem('another.app')).toBe('keep');
+  });
+  it('keeps optional demo mode in the session and returns to public mode', () => {
+    service().setDemo(true);
     expect(service().demo()).toBe(true);
+    expect(new PreferencesService().demo()).toBe(true);
+    service().setDemo(false);
+    expect(service().demo()).toBe(false);
+    expect(sessionStorage.getItem('jw2.demo')).toBeNull();
   });
   it('persists independent movie/TV watchlist entries and toggles removal', () => {
     const movie = DEMO_CATALOG[0];
