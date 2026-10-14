@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "justwatch2-catalog-api",
+  "account_id": "4cc087ddcecb6c54802a6acefcd3e87f",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-14",
+  "workers_dev": true,
+  "preview_urls": false,
+  "send_metrics": false,
+  "secrets": {
+    "required": ["TMDB_READ_ACCESS_TOKEN"]
+  },
+  "observability": {
+    "enabled": false
+  }
+}

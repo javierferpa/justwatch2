@@ -8,6 +8,11 @@
 
 # Node
 /node_modules
+/api/node_modules/
+/.wrangler/
+/api/.wrangler/
+.dev.vars
+.dev.vars.*
 npm-debug.log
 yarn-error.log
 

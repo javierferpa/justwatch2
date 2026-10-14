@@ -9,12 +9,17 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      WRANGLER_SEND_METRICS: 'false'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - run: npm ci
+      - run: npm ci --prefix api
+      - name: Validate Cloudflare Worker bundle
+        run: npm run build --prefix api
       - run: npm run check
       - run: npm run build:pages
       - name: Check committed Pages bundle
