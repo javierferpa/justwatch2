@@ -1,11 +1,22 @@
-<!-- navbar.component.html -->
-<nav class="navbar">
-    <div class="navbar-brand">
-      <img src="assets/logo.png" alt="Logo" class="logo" (click)="onLogoClick()" >
-    </div>
-    <div class="navbar-links">
-      <a routerLink="/tv" routerLinkActive="active" class="nav-link">TV</a>
-      <a routerLink="/movies" routerLinkActive="active" class="nav-link">Movies</a>
-    </div>
-  </nav>
-  
+<header class="navbar">
+  <div class="nav-inner container">
+    <a class="brand" routerLink="/" aria-label="JustWatch2, inicio"><span class="brand-play" aria-hidden="true">▶</span>justwatch<span class="brand-two">2</span></a>
+    <nav class="nav-links" aria-label="Navegación principal">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page">Descubrir</a>
+      <a routerLink="/movies" routerLinkActive="active" ariaCurrentWhenActive="page">Películas</a>
+      <a routerLink="/tv" routerLinkActive="active" ariaCurrentWhenActive="page">Series</a>
+      <a routerLink="/watchlist" routerLinkActive="active" ariaCurrentWhenActive="page">Mi lista <span class="list-count">{{ preferences.watchlist().length }}</span></a>
+    </nav>
+    <form class="nav-search" (ngSubmit)="submitSearch()" role="search">
+      <span aria-hidden="true">⌕</span>
+      <input type="search" name="query" [(ngModel)]="search" aria-label="Buscar películas y series" placeholder="Busca tu próxima historia" maxlength="200">
+      <button type="submit" aria-label="Buscar"><span aria-hidden="true">↵</span></button>
+    </form>
+    <label class="region-control"><span class="sr-only">País de disponibilidad</span>
+      <select [ngModel]="preferences.region()" (ngModelChange)="preferences.setRegion($event)" aria-label="País de disponibilidad" [title]="preferences.regionName()">
+        @for (region of regions; track region.code) { <option [value]="region.code">{{ region.code }} · {{ region.name }}</option> }
+      </select>
+    </label>
+    <a class="settings-link" routerLink="/settings" routerLinkActive="active" aria-label="Ajustes" title="Ajustes"><span aria-hidden="true">⚙</span></a>
+  </div>
+</header>

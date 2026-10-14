@@ -1,9 +1,17 @@
-<main class="main">
-  <div class="header">
-    <app-navbar></app-navbar>
-  </div>
-  <div class="content">
-    <router-outlet></router-outlet>
-  </div>
+<a class="skip-link" href="#main-content" (click)="$event.preventDefault(); content.focus()">Saltar al contenido</a>
+<app-navbar />
+<main id="main-content" #content tabindex="-1">
+  <router-outlet />
 </main>
-
+@if (preferences.storageNotice()) {
+  <p class="storage-notice" role="status">{{ preferences.storageNotice() }}</p>
+}
+<footer class="site-footer container">
+  <a class="footer-brand" routerLink="/">justwatch<span>2</span></a>
+  <div>
+    <p>Tu próxima historia, a un clic.</p>
+    <p class="credits">Datos e imágenes de <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">TMDB</a>.
+      Disponibilidad de <a href="https://www.justwatch.com" target="_blank" rel="noopener noreferrer">JustWatch</a>.</p>
+  </div>
+  <a routerLink="/settings">Conexión y créditos <span aria-hidden="true">↗</span></a>
+</footer>

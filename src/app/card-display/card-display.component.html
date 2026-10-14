@@ -1,15 +1,98 @@
-<div class="card-container">
-  <div *ngFor="let peli of data" class="card" (click)="onCardClick(peli.id)" >
-    <div class="circle">
-      <p class="score">{{ peli.vote_average | number:'1.0-2' }}</p>
-    </div>
-    <img *ngIf="peli?.poster_path; else defaultImage" [src]="'https://image.tmdb.org/t/p/original' + peli.poster_path" width="80%" height="60%" sizes="(max-width: 768px) 100vw, 50vw " alt="Descripción de la imagen">
-    <ng-template #defaultImage>
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAflBMVEX///8BAQEAAAD8/PwFBQXs7OyAgID5+fm1tbXn5+dPT0+dnZ2wsLDe3t7v7+9kZGTHx8ejo6NdXV0+Pj5JSUnOzs7W1tY9PT1sbGxhYWExMTF9fX0VFRWzs7NVVVXf39+KiorIyMh/f38pKSmTk5MdHR0kJCQ2NjYXFxeIiIjah5UFAAAHT0lEQVR4nO2da3faMAyGg2wIlGuAUAqsl5W26///g7McoF1by4aktZXp+bCdrYcev0iWb5KdZYIgCIIgCIIgCIIgCIIgCIIgCILABXX4O5+MZ/1RUQyHxWjUL8eT3P5UKeKzbFj1X+cb+IheTPf9Qey21cEaR5X7q5OmjobOAegc/3M96mY8bWlarGZbXUlzYn98XXRjt/YiBvfP1hm1Wx+i7ZcwLWM39xwU2m91Y41nzKcJE6JCqDx2Mas+ywDsUeWcds7P3mqEXpdMFGZZd22cs3OOQGNKNOZ6ErvpARgjFOeZ72DEjg07fQZmHCwv0HdQiWbMYwvw0cfoeaFE/CRsEp8EvNrIeKENrUqAVcKOmpsh4lIDHjARCmaxdTiZLMDGxDoKAc3Yj63EweTFemg9G1qVxoopOmq+qdUB3wvEvpgeagGeGeg5EnVyc3GVTRuyoJWoYZHcuHh/5kTUg4ZeYl1x1kiIOWKH/ofYmt6h1KBJ+3WqLYBdniW08L9tWGEH/fQ1IYWj5gXiLHycTFecNC/QDhlXySj8/Q0CrcZUgs3AN9s+rG5PG4h2XPF/K2jEFFDZ1jMSmtivD8I2y6urxc6zw/j2OZy8JeCo3l6IQQN269HqNE3plsXUr9J8bpqCwGzvbSnA/KFqqao2t/Ef+a+lz5bmmxkkIDF/9Lio0edYKTy8AD1bBxj+rJgvmZFxBqr9sy+n0cY6Q4/9YfPTcr5gTSrUsOxmrrmJ0V0COaHFUT8uKss14WhG/E1O96SxJvfmoPgpKQ5UtnL7GXrordOA734B5eXzH9PiauDeaUK0zXWe0SOakd+nT99+SoqTK3fzwoI9uTtg3PzuJ1RQkAYoAkYzZWZ97l+io+8sEktfsKE+ROLUGY7ND+6/XQPNjIr0oV//jLLh+lvb76dwNg7gT+iEa+J2UxuNo7Ilvv3fwXPKR/esARaRJ6Y3hMIyWOEV0ZsfIyt0DxYAk2CF1HjxFHlr+MXdtOvw1avbEzrwJ65CtXErPGO+RRyMx7Zh/vQpXe3ENvzXPBOx9EVFXQTnO7fC1+Df4t4HMTF2+Y3ND0ANui4GgbkxihrxjcLIiwvCf4J35HMzqLpXiNBrpKHfQahCs4gmZu86+hK4CajNGgBWSYtfQ57MASR3FnwmCqdFRC+El9gtrIlSZJgxEu9jN7E2e3qrjXk3zJVdXxLb3qC5d8MhvSHcwZPu2G2sxZA+t0g8T9GH/9QC84Zit7IOCpOMKIGoMPZWYj22nqM1I/E5dhsvRuWZmvqTiWEUu6EXYxa1t/5MRniM3c4adDdegZBqHq0fM1PDQ0N/mkLsveAalN4YY02YeFkCAR4Yemoy4JCkwNFLFab5aU8yKlZNXcdu6cWMAopqMEXljqUBs4NAuhdCVeKVc1xW5LYsyjtZ47z/FBRFTSfcf51jlD531kXpIIP0Esp/PoM8mzzZLkYbUOszzgPSQmXLEBfF3ASOBkR6ONB7FaJAjgpN6J/5E4Mxiu5jN/VCVNb1h1EcSEKSjBJl7hdoU3BYuijS9/morXVivC9DnaC9uWh4fkp60KcTlYvuxnxdNBt7arzRRZ/5rnir7EOPQtiEJxglyIoeKbAGf5HjQQ1bbjyBNMWy37O4owVWdc18DahwQupZMfG2oBkAfLU/Gw4X77jBcgP6IFt3GbtohgpvwX0bCIbRFeOB3tL1HGTzPWA6MqJLDOc8d7bfM6fS1nQSNZT1yHfkWBi7nKIBSrr+MnZ9YQMMqeE+kXr0Gii8MoNKzPsVu4V1sRMaqgST92zGQmWParhhH0jJujSjkP9oj4HGKbCTxoUC9VBEcRvzhJkTc2pV0YLhPsvchVFGYgp3QtSGTMRP9wrIcBSpMHolegNQl9cAcA+kyCDt+xIa4I5SyL1axLKiFE5jt64JiKtPUi68O4Nxuyt+Mk8/bMOAr0iFbVhZ4GapG8an9ifUZNtzsk3xOmRBEARBEAQadfpD4Eo+mI2KYlQm93JFA2AyyWz9fFxSXN+P7XOArfLYkb0xS9uLyvHu69s0LupujHID/yYNGZHTFpyNHqhu9/h3qY8GfWrP6vD+q5JKsI+QsE5JrFDVO2Wf89ps7QHn1Pwj7qpf+1RCGwYOKlEh/u2rTTAnXrJgf3cJ+mjpuXQ/9uWkNVGKTIjq8M+Jsjd1+3LYYzeyFsr/5irnyy8yVEjcnnuUyDzWBLwkw7VuuyKg6JD5OXDX/+ZR7Et0a+J/UU8zvqQF8SsE5jb090P2+RgBClnnYwSMh+xPut2vX5wUMp/T3HkV8g6ldm3huW5nxHojwyik7zPB9SFngdY6xOsjLalGGFDllcyHe4t7iWhPMAat2Nvf4v1rnwXifmkbEtmRnsuIXK8n/Uj+8dzicMa2Y1/C/Y6HRzxa0yf/1O06e0JU8fZqrDXg8qFFBszs/fmqPz2+egyb3qp1R8CWfNwvhsNi1objmP8X9e5PQRAEQRAEQRAEQRAEQRAEQRCE/46/lIlCdHGnt3gAAAAASUVORK5CYII=" width="80%" height="60%" sizes="(max-width: 768px) 100vw, 50vw">
-    </ng-template>
-    
+<div class="container catalog-page">
+  @if (type() === 'all' && !search()) {
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> Menos buscar. Más disfrutar.</p>
+        <h1 id="hero-title" aria-label="Tu próxima gran historia.">Tu próxima<br>gran <span>historia.</span></h1>
+        <p class="hero-description">Películas que se quedan contigo. Series que no puedes soltar. Encuentra qué ver y dónde verlo.</p>
+        <div class="hero-actions">
+          <button class="button" (click)="scrollToCatalog()">Explorar catálogo <span aria-hidden="true">↓</span></button>
+          <a class="button secondary" routerLink="/watchlist">Mi lista <span aria-hidden="true">+</span></a>
+        </div>
+        <p class="hero-footnote"><span aria-hidden="true">✦</span> Tu tiempo es valioso. Elige una buena historia.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="hero-orbit"></div>
+        @for (item of heroItems; track item.id; let i = $index) {
+          <div class="hero-poster" [class]="'hero-poster poster-' + i"><img appImageFallback [src]="image(item.poster_path)" alt="" width="300" height="450" fetchpriority="high"></div>
+        }
+        <div class="art-note"><span>✦</span><div>Una noche. Mil posibilidades.<small>Cine, series y algo para ti.</small></div></div>
+      </div>
+    </section>
+  }
+  <div class="mode-bar" [class.connected]="!preferences.demo()">
+    <span><span class="mode-dot" aria-hidden="true"></span>{{ preferences.demo() ? 'Modo de ejemplo' : 'Catálogo conectado' }}</span>
+    <p>{{ preferences.demo() ? '20 títulos para descubrir la app. Conecta TMDB para buscar en el catálogo completo y consultar dónde verlos.' : 'Datos de TMDB · Disponibilidad de JustWatch para ' + preferences.regionName() }}</p>
+    <a routerLink="/settings">{{ preferences.demo() ? 'Conectar TMDB' : 'Ajustes' }} <span aria-hidden="true">↗</span></a>
   </div>
-</div>
-<div *ngIf="isLoadingData" class="loading-spinner">
-  <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+  <section id="catalog" aria-labelledby="catalog-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{{ type() === 'watchlist' ? 'GUARDADO PARA TI' : search() ? 'ENCUENTRA TU HISTORIA' : type() === 'all' ? 'EN EL RADAR' : 'EXPLORA EL CATÁLOGO' }}</p>
+        @if (type() === 'all' && !search()) { <h2 id="catalog-title">{{ heading() }}</h2> }
+        @else { <h1 id="catalog-title">{{ heading() }}</h1> }
+        @if (search()) { <p class="query-summary">Buscando «{{ search() }}» <button class="text-button" (click)="clearFilters()">Borrar búsqueda</button></p> }
+        @else { <p class="section-description">{{ type() === 'watchlist' ? 'Todo lo que quieres ver, en un solo lugar. Se guarda en este navegador.' : type() === 'all' ? preferences.demo() ? 'Una selección de ejemplo para empezar a explorar.' : 'Las películas y series que marcan la semana.' : 'Encuentra algo que encaje con tus ganas de hoy.' }}</p> }
+      </div>
+      <span class="result-count" aria-live="polite">{{ count() | number }} {{ type() === 'watchlist' ? count() === 1 ? 'guardado' : 'guardados' : count() === 1 ? 'título' : 'títulos' }}</span>
+    </div>
+
+    <div class="catalog-toolbar">
+      <nav class="type-tabs" aria-label="Tipo de catálogo">
+        <a routerLink="/" [class.selected]="type() === 'all'">Todo</a>
+        <a routerLink="/movies" [class.selected]="type() === 'movie'">Películas</a>
+        <a routerLink="/tv" [class.selected]="type() === 'tv'">Series</a>
+        @if (type() === 'watchlist') { <span class="selected">Mi lista</span> }
+      </nav>
+      @if ((type() === 'movie' || type() === 'tv') && !search()) {
+        <div class="filters">
+          <label><span class="sr-only">Género</span><select aria-label="Género" [value]="genre()" (change)="setFilter('genre', $any($event.target).value)">
+            <option value="">Todos los géneros</option>
+            @for (item of genres(); track item.id) { <option [value]="item.id">{{ item.name }}</option> }
+          </select></label>
+          <label><span class="sr-only">Plataforma de streaming</span><select aria-label="Plataforma de streaming" [value]="provider()" [disabled]="preferences.demo() || !providers().length" (change)="setFilter('provider', $any($event.target).value)">
+            <option value="">{{ preferences.demo() ? 'Conecta TMDB' : 'Todas las plataformas' }}</option>
+            @for (item of providers(); track item.provider_id) { <option [value]="item.provider_id">{{ item.provider_name }}</option> }
+          </select></label>
+          <label><span class="sr-only">Ordenar catálogo</span><select aria-label="Ordenar catálogo" [value]="sort()" (change)="setFilter('sort', $any($event.target).value)">
+            <option value="popular">Más populares</option><option value="rating">Mejor valoradas</option><option value="newest">Más recientes</option>
+          </select></label>
+        </div>
+      }
+    </div>
+    @if (genre() || provider() || sort() !== 'popular') { <button class="reset-filters text-button" (click)="clearFilters()">Restablecer filtros ×</button> }
+    @if (providerError()) { <p class="provider-warning" role="status">{{ providerError() }} <button class="text-button" (click)="loadProviderOptions(true)">Reintentar</button></p> }
+
+    @if (displayed().length) {
+      <div class="media-grid" [attr.aria-busy]="loading()">
+        @for (item of displayed(); track key(item); let i = $index) { <app-media-card [item]="item" [priority]="i < 6" /> }
+      </div>
+    }
+    @if (loading() && !displayed().length) {
+      <div class="media-grid skeleton-grid" aria-hidden="true">@for (n of [1,2,3,4,5,6]; track n) { <div class="skeleton"><div></div><span></span><span></span></div> }</div>
+      <p class="loading-text" role="status"><span class="spinner" aria-hidden="true"></span> Cargando historias…</p>
+    }
+    @if (error()) {
+      <div class="state-panel" role="alert"><h2>Vamos a intentarlo de nuevo</h2><p>{{ error() }}</p>
+        <button class="button" (click)="load()">Reintentar</button><a class="button secondary" routerLink="/settings">Revisar conexión</a>
+      </div>
+    }
+    @if (!loading() && !error() && !displayed().length) {
+      <div class="state-panel">
+        <span class="empty-symbol" aria-hidden="true">{{ type() === 'watchlist' ? '+' : '⌕' }}</span>
+        <h2>{{ type() === 'watchlist' && !search() ? 'Tu lista está esperando una buena historia' : 'No encontramos títulos con esta selección' }}</h2>
+        <p>{{ type() === 'watchlist' && !search() ? 'Pulsa + en cualquier cartel para guardarlo aquí y tenerlo a mano cuando llegue la noche de sofá.' : preferences.demo() ? 'La búsqueda de ejemplo está limitada a 20 títulos. Prueba «Dune» o conecta TMDB para explorar más.' : 'Prueba otra búsqueda o cambia los filtros.' }}</p>
+        @if (type() === 'watchlist' && !search()) { <a class="button" routerLink="/">Descubrir historias</a> }
+        @else { <button class="button secondary" (click)="clearFilters()">Limpiar selección</button> }
+      </div>
+    }
+    @if (type() !== 'watchlist' && displayed().length && !error()) {
+      <div class="load-more">
+        @if (page() < totalPages()) {
+          <button class="button secondary" [disabled]="loading()" (click)="load()">@if (loading()) { <span class="spinner" aria-hidden="true"></span> }{{ loading() ? 'Cargando…' : 'Descubrir más' }}</button>
+        }
+        <p>{{ displayed().length }} de {{ total() | number }} títulos{{ page() >= totalPages() ? ' · Has llegado al final' : '' }}</p>
+      </div>
+    }
+  </section>
 </div>

@@ -1,21 +1,72 @@
-<div class="card-detail-container">
-    <div class="content-container" [ngStyle]="{'background-image': 'url(https://image.tmdb.org/t/p/original/' + this.movieDetails.backdrop_path +')'}">
-        <div class="left-column">
-            <!-- Imagen grande en la columna izquierda -->
-            <img [src]="'https://image.tmdb.org/t/p/original' + this.movieDetails.poster_path" alt="Imagen 1">
+@if (loading()) {
+  <div class="container state-panel loading-detail" role="status"><span class="spinner" aria-hidden="true"></span><p>Cargando la historia…</p></div>
+}
+@if (error()) {
+  <div class="container state-panel" role="alert"><h1>No podemos mostrar esta ficha</h1><p>{{ error() }}</p>
+    @if (canRetry()) { <button class="button" (click)="loadDetail()">Reintentar</button> }<a class="button secondary" routerLink="/">Volver al catálogo</a>
+    @if (preferences.demo()) { <p>El modo de ejemplo solo incluye los 20 títulos de la selección. <a routerLink="/settings">Conecta TMDB</a> para consultar otros títulos.</p> }
+  </div>
+}
+@if (detail(); as item) {
+  <div class="detail-backdrop" [style.background-image]="backdrop()"></div>
+  <div class="container detail-page">
+    <nav class="breadcrumbs" aria-label="Ruta de navegación"><a routerLink="/">Descubrir</a><span aria-hidden="true">/</span><a [routerLink]="item.media_type === 'tv' ? '/tv' : '/movies'">{{ item.media_type === 'tv' ? 'Series' : 'Películas' }}</a><span aria-hidden="true">/</span><span>{{ item.title }}</span></nav>
+    <section class="detail-hero" aria-labelledby="detail-title">
+      <div class="detail-poster"><img appImageFallback [src]="image(item.poster_path)" [alt]="'Cartel de ' + item.title" width="400" height="600"></div>
+      <div class="detail-copy">
+        <p class="eyebrow">{{ item.media_type === 'tv' ? 'UNA SERIE PARA QUEDARTE' : 'UNA HISTORIA PARA DESCUBRIR' }}</p>
+        <h1 id="detail-title">{{ item.title }}</h1>
+        @if (item.tagline) { <p class="tagline">{{ item.tagline }}</p> }
+        <div class="detail-meta">
+          <span class="detail-score">★ {{ item.vote_count ? (item.vote_average | number:'1.1-1') : 'Sin puntuación' }}</span>
+          <span>{{ item.release_date.slice(0, 4) || 'Sin fecha de estreno' }}</span>
+          <span>{{ item.media_type === 'tv' ? 'Serie' : 'Película' }}</span>
+          @if (item.runtime) { <span>{{ item.runtime }} min</span> }
+          @if (item.number_of_seasons) { <span>{{ item.number_of_seasons }} {{ item.number_of_seasons === 1 ? 'temporada' : 'temporadas' }}</span> }
         </div>
-        <div class="right-column">
-            <!-- Título -->
-            <h1>{{this.movieDetails.title}}</h1>
-            <br>
-            <!-- Subtítulo -->
-            <h3>{{this.movieDetails.overview}}</h3>
-            <!-- Recuadro con imágenes pequeñas -->
-            <div class="image-box">
-                @for(provider of watchProviders; track provider.provider_id) {
-                <img [src]="'https://image.tmdb.org/t/p/original' + provider.logo_path" alt="Imagen 1">
-                }
-            </div>
+        <div class="genre-tags">@for (genre of item.genres; track genre.id) { <span class="pill">{{ genre.name }}</span> }</div>
+        <h2 class="synopsis-heading">La historia</h2>
+        <p class="synopsis">{{ item.overview || 'Todavía no hay una sinopsis disponible en español para este título.' }}</p>
+        <div class="detail-actions">
+          <button class="button" (click)="preferences.toggle(item)" [attr.aria-pressed]="preferences.has(item)">{{ preferences.has(item) ? '✓ En mi lista' : '+ Guardar en mi lista' }}</button>
+          @if (trailer()) { <a class="button secondary" [href]="trailer()" target="_blank" rel="noopener noreferrer">▶ Ver tráiler</a> }
+          <a class="tmdb-link" [href]="'https://www.themoviedb.org/' + item.media_type + '/' + item.id" target="_blank" rel="noopener noreferrer">Ficha en TMDB ↗</a>
         </div>
+        @if (preferences.demo()) { <p class="demo-note">Ficha de ejemplo · Datos de la selección del 14 de octubre de 2026.</p> }
+      </div>
+    </section>
+    <div class="detail-sections">
+      <section class="availability-section" aria-labelledby="availability-title">
+        <div class="availability-heading"><div><p class="eyebrow">ELIGE DÓNDE DISFRUTARLA</p><h2 id="availability-title">Dónde ver en {{ preferences.regionName() }}</h2></div><a routerLink="/settings">Cambiar país ↗</a></div>
+        @if (preferences.demo()) {
+          <div class="availability-empty"><h3>Consulta la disponibilidad real</h3><p>Conecta TMDB para ver las opciones de suscripción, alquiler y compra en {{ preferences.regionName() }}.</p><a class="button secondary" routerLink="/settings">Conectar TMDB ↗</a></div>
+        } @else if (providerLoading()) {
+          <p class="providers-loading" role="status"><span class="spinner" aria-hidden="true"></span> Consultando plataformas…</p>
+        } @else if (providerError()) {
+          <div class="availability-empty" role="alert"><p>{{ providerError() }}</p><button class="button secondary" (click)="loadProviders()">Reintentar disponibilidad</button></div>
+        } @else {
+          @for (group of groups(); track group.label) {
+            <div class="provider-group"><h3>{{ group.label }}</h3><div class="provider-list">
+              @for (provider of group.providers; track provider.provider_id) {
+                <div class="provider"><img appImageFallback [src]="image(provider.logo_path, 'w92')" alt="" width="42" height="42" loading="lazy"><span>{{ provider.provider_name }}</span></div>
+              }
+            </div></div>
+          } @empty {
+            <div class="availability-empty"><h3>Sin opciones registradas en este país</h3><p>TMDB y JustWatch no ofrecen datos de disponibilidad para esta selección. Puedes probar otro país; esto no confirma que el título no esté disponible.</p></div>
+          }
+          @if (providerLink()) { <a class="button" [href]="providerLink()" target="_blank" rel="noopener noreferrer">Ver opciones para este país <span aria-hidden="true">↗</span></a> }
+        }
+        <p class="provider-credit">Disponibilidad proporcionada por <a href="https://www.justwatch.com" target="_blank" rel="noopener noreferrer">JustWatch</a> a través de TMDB. Confirma precios y condiciones en la plataforma.</p>
+      </section>
+      <aside class="about-title">
+        <p class="eyebrow">UN POCO MÁS</p><h2>Sobre este título</h2>
+        <dl><dt>Título original</dt><dd>{{ item.original_title }}</dd><dt>Puntuación TMDB</dt><dd>{{ item.vote_count ? (item.vote_average | number:'1.1-1') + ' / 10' : 'Sin puntuación' }} · {{ item.vote_count | number }} votos</dd><dt>Tipo</dt><dd>{{ item.media_type === 'tv' ? 'Serie de televisión' : 'Largometraje' }}</dd></dl>
+      </aside>
     </div>
-</div>
+    @if (item.cast.length) {
+      <section class="cast-section" aria-labelledby="cast-title"><p class="eyebrow">QUIENES LE DAN VIDA</p><h2 id="cast-title">Reparto principal</h2><div class="cast-grid">
+        @for (person of item.cast; track person.id) { <article class="cast-person"><img appImageFallback [src]="image(person.profile_path, 'w185')" [alt]="person.name" width="185" height="278" loading="lazy"><h3>{{ person.name }}</h3><p>{{ person.character }}</p></article> }
+      </div></section>
+    }
+  </div>
+}

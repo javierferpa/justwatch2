@@ -1,0 +1,14 @@
+.media-card { position: relative; min-width: 0; }
+.poster-link { display: block; aspect-ratio: 2/3; overflow: hidden; position: relative; border-radius: 12px; background: var(--surface); }
+.poster-link img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
+.poster-link:hover img { transform: scale(1.035); }
+.score { position: absolute; top: 12px; left: 12px; padding: 5px 9px; border-radius: 7px; font-size: 12px; font-weight: 750; color: var(--gold); background: #0d1015ec; }
+.score.unrated { color: var(--muted); }
+.poster-overlay { display: flex; align-items: end; justify-content: space-between; position: absolute; inset: 45% 0 0; padding: 18px; background: linear-gradient(transparent, #000b); color: white; opacity: 0; transition: opacity .2s; font-size: 13px; font-weight: 600; }
+.poster-link:hover .poster-overlay, .poster-link:focus-visible .poster-overlay { opacity: 1; }
+.save-button { position: absolute; right: 10px; top: 10px; width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #ffffff30; border-radius: 50%; background: #0d1015da; color: white; font-size: 23px; cursor: pointer; }
+.save-button.saved { color: #111; background: var(--gold); border-color: var(--gold); font-size: 18px; }
+.card-title { display: block; margin-top: 13px; color: var(--text); text-decoration: none; font-size: 14px; line-height: 1.4; font-weight: 650; }
+.card-title:hover { color: var(--gold); }
+.card-meta { display: flex; gap: 8px; margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+@media (prefers-reduced-motion: reduce) { .poster-link img { transition: none; } }
